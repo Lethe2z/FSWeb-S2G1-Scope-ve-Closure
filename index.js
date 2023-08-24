@@ -30,8 +30,9 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  Skor1 kendi icinde bir skor yaratip returnunde bir fonksiyon cagiriyor ve skoru arttiriyor. skor2 ise disarida bir degisken olusturuyor ve onu arttiriyor direkt/
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
+  skor1 closure kullanmaktadır, skor2 ıse direkt olarak fonksiyondur.
   
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
 */
@@ -64,11 +65,10 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+    let res = Math.floor((Math.random()*16) + 10);
+    return res;
 }
-
-
 
 
 /* Görev 3: macSonucu() 
@@ -86,10 +86,20 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
-}
+function macSonucu(callback, quart){
 
+  let EvSahibi = 0, KonukTakim = 0;
+
+  for(let i = 0; i<quart; i++){
+    EvSahibi += callback();
+    KonukTakim = KonukTakim + callback();
+  }
+  return {
+    "EvSahibi" : EvSahibi,
+    "KonukTakim" : KonukTakim
+  }
+}
+console.log(macSonucu(takimSkoru, 4));
 
 
 
@@ -109,9 +119,13 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-
+function periyotSkoru(callback) {
+  let EvSahibi = callback();
+  let KonukTakimi = callback();
+  return { 
+    "EvSahibi": EvSahibi,
+    "KonukTakim": KonukTakimi
+  }
 }
 
 
@@ -146,9 +160,39 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function skorTabelasi(periyot, callback, quart) {
+  let arr = [];
+  let macSkoru = {
+    EvSahibi : 0,
+    KonukTakim : 0
+  };
+  for (let index = 1; index <= quart; index++) {
+    const pSkor = periyot(callback);
+    macSkoru.EvSahibi += pSkor.EvSahibi;
+    macSkoru.KonukTakim += pSkor.KonukTakim;
+    arr.push(`${index}. Periyot : Ev Sahibi ${ pSkor.EvSahibi} - Konuk Takim ${pSkor.KonukTakim}`);
+  }
+  let uzatma = 1;
+
+ 
+  
+  while (macSkoru.KonukTakim === macSkoru.EvSahibi){
+    const pSkor = periyot(callback);
+    macSkoru.EvSahibi += pSkor.EvSahibi;
+    macSkoru.KonukTakim += pSkor.KonukTakim;
+    arr.push(`${uzatma}. Uzatma Ev Sahibi ${ pSkor.EvSahibi} - Konuk Takim ${pSkor.KonukTakim}`);
+    uzatma++;
+  } 
+  console.log(`Mac Sonucu : Ev Sahibi ${macSkoru.EvSahibi} - Konuk Takim ${macSkoru.KonukTakim}`);
+  
+  
+  for (let index = 0; index < arr.length; index++) {
+    console.log(arr[index]);
+    
+  }
 }
+skorTabelasi(periyotSkoru,takimSkoru,4)
+
 
 
 
